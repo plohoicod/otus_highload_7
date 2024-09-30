@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  service-db-shard-11:
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - services
+    restart: unless-stopped
+  backend-2:
+    image: backend-client-7:0.0.1
+    networks:
+      - services
+    depends_on:
+      - service-db-shard-11
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8081"
+    environment:
+      - SERVER_PORT= 8081
+
+networks:
+  pgnet:
+    external: true
+    name: pgnet
+  services:
+    external: true
+    name: services
